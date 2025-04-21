@@ -3,12 +3,9 @@ This project is a Smart Catalog Generator app that helps automate the process of
 
 The app can be used by e-commerce platforms or anyone looking to streamline their product listing creation process. It automatically generates:
 
-Product titles
+-Product titles
+-Descriptions
+-Feature bullet points
+-SEO tags
 
-Descriptions
-
-Feature bullet points
-
-SEO tags
-
-The project is being built in public, with a focus on simplicity, scalability, and integration of AI technologies for automated product categorization.
+I'm building this project in public, with a focus on simplicity, scalability, and integration of AI technologies for automated product categorization. 

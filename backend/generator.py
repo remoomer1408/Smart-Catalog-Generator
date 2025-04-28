@@ -1,21 +1,50 @@
-# backend/generator.py
+import openai
+import os
+import json
+from dotenv import load_dotenv
+
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
 def process_csv_file(df):
-    generated = []
+    results = []
+
     for _, row in df.iterrows():
-        product_name = row.get("Product Name", "Unnamed Product")
-        category = row.get("Category", "General")
+        product_name = row.get("product_name") or "Generic Product"
 
-        entry = {
-            "product_name": product_name,
-            "title": f"Top-Quality {product_name}",
-            "description": f"This {product_name} in the {category} category is perfect for modern needs.",
-            "features": [
-                f"Premium build for long-lasting use",
-                f"Perfect for {category.lower()} enthusiasts",
-                "Designed with care and efficiency"
-            ],
-            "tags": [product_name.lower(), category.lower(), "premium", "best seller"]
-        }
-        generated.append(entry)
+        prompt = f"""
+        Generate a product title, a short but compelling description, and 3 bullet points for SEO from the product name: "{product_name}"
 
-    return generated
+        Respond in JSON format like:
+        {{
+            "title": "...",
+            "description": "...",
+            "features": ["...", "...", "..."]
+        }}
+        """
+
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    { "role": "user", "content": prompt }
+                ],
+                temperature=0.7,
+                max_tokens=300
+            )
+
+            content = response.choices[0].message.content.strip()
+            generated = json.loads(content)  # parse clean JSON
+        
+        except Exception as e:
+            generated = {
+                "title": product_name,
+                "description": "AI generation failed",
+                "features": [],
+                "error": str(e), 
+                "product_name": product_name
+            }
+
+        results.append(generated)
+
+    return results
